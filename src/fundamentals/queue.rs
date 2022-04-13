@@ -81,7 +81,7 @@ impl<T: Copy> IntoIterator for &Queue<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::fundamentals::queue::{Queue, QueueIterator};
+    use crate::fundamentals::queue::Queue;
 
     #[test]
     fn empty_queue() {
