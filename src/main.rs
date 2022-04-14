@@ -8,11 +8,11 @@ pub mod io;
 fn main() {
 //    Use of any of the method to test the stdin functionality.
 //     cargo run < {file.txt}
-    read_boolean();
-    read_boolean();
-    read_boolean();
-    read_boolean();
-    // read_boolean();
+    read_int();
+    read_int();
+    read_double();
+    read_double();
+    read_byte();
 }
 
 fn read_line() {
@@ -67,5 +67,20 @@ fn read_string() {
 
 fn read_boolean() {
     let string = io::stdin::read_boolean();
+    println!("{:?}", string);
+}
+
+fn read_int() {
+    let string = io::stdin::read_int();
+    println!("{:?}", string);
+}
+
+fn read_double() {
+    let string = io::stdin::read_double();
+    println!("{:?}", string);
+}
+
+fn read_byte() {
+    let string = io::stdin::read_byte();
     println!("{:?}", string);
 }
