@@ -1,8 +1,6 @@
 use std::cell::RefCell;
 use std::io;
-use std::io::{BufRead};
-use std::iter::Map;
-use std::str::Split;
+use std::io::BufRead;
 
 thread_local!(static CACHED_BUFFER: RefCell<InputBuffer> = RefCell::new(initialize_buffer()));
 
@@ -39,6 +37,23 @@ pub fn read_all_strings() -> Vec<String> {
     strings
 }
 
+pub fn read_string() -> String {
+    let val = match read_next() {
+        Some(val) => val,
+        None => panic!("attempts to read a 'String' value from standard input, but no more tokens are available")
+    };
+    val
+}
+
+fn read_next() -> Option<String> {
+    let val = match next() {
+        Some(val) => Some(val.to_string()),
+        None => None
+    };
+    increment_position();
+    val
+}
+
 pub fn read_all() -> String {
     let lines = read_all_lines();
     let mut all_strings = String::new();
@@ -47,7 +62,7 @@ pub fn read_all() -> String {
         all_strings.push_str(&line);
         all_strings.push_str("\n");
     }
-    all_strings.remove(all_strings.len()-1);
+    all_strings.remove(all_strings.len() - 1);
     all_strings
 }
 
@@ -108,6 +123,22 @@ pub fn read_all_doubles() -> Vec<f64> {
     all_doubles
 }
 
+pub fn read_boolean() -> bool {
+    let val: bool = match read_next() {
+        Some(val) => match val.trim().parse() {
+            Ok(v) => v,
+            Err(_) => {
+                let trimmed = val.trim();
+                if trimmed == "0" {false}
+                else if trimmed == "1" {true}
+                else {panic!("Unable to parse the input ({}) to the boolean value", val.trim())}
+            }
+        },
+        None => panic!("attempts to read a 'Boolean' value from standard input, but no more tokens are available")
+    };
+    val
+}
+
 pub fn has_next_line() -> bool {
     let stdin = io::stdin();
     let mut lines_iter = stdin.lock().lines().map(|l| l.unwrap());
@@ -117,31 +148,47 @@ pub fn has_next_line() -> bool {
     }
 }
 
-pub fn is_empty() -> bool {
-    let ans = CACHED_BUFFER.with(|buffer| {
+fn has_next() -> bool {
+    CACHED_BUFFER.with(|buffer| {
         let mut borrowed_buffer = buffer.borrow_mut();
-        if borrowed_buffer.position >= borrowed_buffer.lines.len() { true } else {
-            println!("{:?}", borrowed_buffer.lines);
-            let item = borrowed_buffer.lines.get(borrowed_buffer.position);
-            match item {
-                Some(_) => {
-                    borrowed_buffer.position += 1;
-                    false
-                }
-                None => true
+        let item = borrowed_buffer.lines.get(borrowed_buffer.position);
+        match item {
+            Some(_) => false,
+            None => true
+        }
+    })
+}
+
+fn next() -> Option<String> {
+    let string = CACHED_BUFFER.with(|buffer| {
+        let mut buffer_mut = buffer.borrow_mut();
+        let item = buffer_mut.lines.get(buffer_mut.position);
+        match item {
+            Some(val) => {
+                Some(val.to_string())
             }
+            None => None
         }
     });
-    ans
+    string
+}
+
+fn increment_position() {
+    CACHED_BUFFER.with(|buffer| {
+        buffer.borrow_mut().position += 1;
+    });
+}
+
+pub fn is_empty() -> bool {
+    has_next()
 }
 
 fn initialize_buffer() -> InputBuffer {
     InputBuffer {
-        lines: read_all_lines(),
+        lines: read_all_strings(),
         position: 0,
     }
 }
-
 
 struct InputBuffer {
     lines: Vec<String>,
