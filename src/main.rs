@@ -8,11 +8,6 @@ pub mod io;
 fn main() {
 //    Use of any of the method to test the stdin functionality.
 //     cargo run < {file.txt}
-    read_int();
-    read_int();
-    read_double();
-    read_double();
-    read_byte();
 }
 
 fn read_line() {
