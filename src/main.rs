@@ -4,9 +4,12 @@ Tests the io parts of the library.
 pub mod io;
 
 fn main() {
-    // has_next();
-    // has_next();
-    // has_next();
+    is_empty();
+    is_empty();
+    is_empty();
+    is_empty();
+    is_empty();
+
 }
 
 fn read_line() {
@@ -24,9 +27,9 @@ fn has_next_line() {
     println!("{}", boolean);
 }
 
-// fn has_next() {
-//     let boolean = io::stdin::has_next();
-//     println!("{}", boolean);
-// }
+fn is_empty() {
+    let boolean = io::stdin::is_empty();
+    println!("{}", boolean);
+}
 
 
