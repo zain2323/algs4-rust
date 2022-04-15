@@ -87,7 +87,7 @@ mod tests {
 
     #[test]
     fn empty_stack() {
-        let mut testing_stack: Stack<i32> = Stack::new();
+        let testing_stack: Stack<i32> = Stack::new();
         assert_eq!(testing_stack.is_empty(), true);
     }
 

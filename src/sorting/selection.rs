@@ -2,15 +2,14 @@
 Sorts the array entries using the Selection Sort Algorithm.
  */
 
-use std::fmt::Debug;
 use crate::sorting::utils::{less, exch};
 
-pub fn sort<T: PartialOrd + Debug + Clone>(arr: &mut Vec<T>) {
+pub fn sort<T: Ord + Copy>(arr: &mut Vec<T>) {
     let n = arr.len();
     for i in 0..n {
         let mut min = i;
         for j in i+1..n {
-            if less(&arr[j], &arr[min]) {
+            if less(arr[j], arr[min]) {
                 min = j;
             }
         }

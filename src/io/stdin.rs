@@ -6,7 +6,7 @@ thread_local!(static CACHED_BUFFER: RefCell<InputBuffer> = RefCell::new(initiali
 
 pub fn read_line() -> String {
     let mut buffer = String::new();
-    let mut stdin = io::stdin();
+    let stdin = io::stdin();
     match stdin.read_line(&mut buffer) {
         Ok(..) => buffer,
         Err(e) => panic!("{:?}", e)
@@ -184,7 +184,7 @@ fn read_next() -> Option<String> {
 
 fn has_next() -> bool {
     CACHED_BUFFER.with(|buffer| {
-        let mut borrowed_buffer = buffer.borrow_mut();
+        let borrowed_buffer = buffer.borrow_mut();
         let item = borrowed_buffer.lines.get(borrowed_buffer.position);
         match item {
             Some(_) => false,
@@ -195,7 +195,7 @@ fn has_next() -> bool {
 
 fn next() -> Option<String> {
     let string = CACHED_BUFFER.with(|buffer| {
-        let mut buffer_mut = buffer.borrow_mut();
+        let buffer_mut = buffer.borrow_mut();
         let item = buffer_mut.lines.get(buffer_mut.position);
         match item {
             Some(val) => {
@@ -223,14 +223,4 @@ fn increment_position() {
 struct InputBuffer {
     lines: Vec<String>,
     position: usize,
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::io::stdin;
-
-    #[test]
-    fn read_all_strings() {
-        stdin::read_all_lines();
-    }
 }

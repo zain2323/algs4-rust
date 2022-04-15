@@ -85,7 +85,7 @@ mod tests {
 
     #[test]
     fn empty_queue() {
-        let mut testing_queue: Queue<i32> = Queue::new();
+        let testing_queue: Queue<i32> = Queue::new();
         assert_eq!(testing_queue.is_empty(), true);
     }
 
@@ -126,7 +126,6 @@ mod tests {
 
         let mut counter = 0;
         for item in testing_queue.iter() {
-            println!("{}", item);
             assert_eq!(item, counter);
             counter += 1;
         }

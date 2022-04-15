@@ -1,15 +1,14 @@
-use std::fmt::Debug;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use crate::sorting::utils::{exch, less};
 
-pub fn sort<T: PartialOrd + Clone + Copy + Debug>(arr: &mut Vec<T>) {
+pub fn sort<T: Ord + Copy>(arr: &mut Vec<T>) {
     let mut rng = thread_rng();
     arr.shuffle(&mut rng);
     quick_sort(arr, 0, arr.len()-1);
 }
 
-fn quick_sort<T: PartialOrd + Clone + Copy + Debug>(arr: &mut Vec<T>, lo: usize, hi: usize) {
+fn quick_sort<T: Ord + Copy>(arr: &mut Vec<T>, lo: usize, hi: usize) {
     if hi <= lo {return;}
     let j = partition(arr, lo, hi);
     if j > 0 {
@@ -22,18 +21,18 @@ fn quick_sort<T: PartialOrd + Clone + Copy + Debug>(arr: &mut Vec<T>, lo: usize,
     quick_sort(arr, j+1, hi);
 }
 
-fn partition<T: PartialOrd + Clone + Copy + Debug>(arr: &mut Vec<T>, lo: usize, hi: usize) -> usize {
+fn partition<T: Ord + Copy>(arr: &mut Vec<T>, lo: usize, hi: usize) -> usize {
     let mut i = lo;
     let mut j = hi + 1;
     let v = arr[lo];
     loop {
         i += 1;
-        while less(&arr[i], &v) {
+        while less(arr[i], v) {
             if i == hi {break}
             i += 1;
         }
         j -= 1;
-        while less(&v, &arr[j]) {
+        while less(v, arr[j]) {
             if j == lo {break}
             j -= 1;
         }

@@ -1,3 +1,5 @@
 /target
 Cargo.lock
 .idea
+demo.txt
+demo_num.txt
