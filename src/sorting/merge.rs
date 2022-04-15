@@ -2,7 +2,7 @@
 Sorts the array entries using the Merge Sort Algorithm.
  */
 
-// use crate::sorting::utils::{less, exch};
+use crate::sorting::utils::{exch, less};
 
 // Merges the two sorted arrays
 fn merge<T: Ord + Copy>(arr: &mut Vec<T>, aux: &mut Vec<T>, lo: usize, mid: usize, hi: usize) {
@@ -43,25 +43,6 @@ fn merge_sort<T: Ord + Copy>(arr: &mut Vec<T>, aux: &mut Vec<T>, lo: usize, hi: 
     merge_sort(arr, aux, lo, mid);
     merge_sort(arr, aux, mid + 1, hi);
     merge(arr, aux, lo, mid, hi);
-}
-
-pub fn less<T: Ord>(v: T, w: T) -> bool {
-    v.lt(&w)
-}
-
-// exchange arr[i] and arr[j]
-pub fn exch<T: Ord>(arr: &mut Vec<T>, i: usize, j: usize) {
-    arr.swap(i, j);
-}
-
-// checks if the array is sorted?
-pub fn is_sorted<T: Ord + Copy>(list: &Vec<T>) -> bool {
-    for i in 1..list.len() {
-        if less(list[i], list[i - 1]) {
-            return false;
-        }
-    }
-    return true;
 }
 
 #[cfg(test)]
