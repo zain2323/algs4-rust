@@ -47,15 +47,6 @@ pub fn read_string() -> String {
     val
 }
 
-fn read_next() -> Option<String> {
-    let val = match next() {
-        Some(val) => Some(val.to_string()),
-        None => None
-    };
-    increment_position();
-    val
-}
-
 pub fn read_all() -> String {
     let lines = read_all_lines();
     let mut all_strings = String::new();
@@ -131,9 +122,7 @@ pub fn read_boolean() -> bool {
             Ok(v) => v,
             Err(_) => {
                 let trimmed = val.trim();
-                if trimmed == "0" {false}
-                else if trimmed == "1" {true}
-                else {panic!("Unable to parse the input ({}) to the boolean value", val.trim())}
+                if trimmed == "0" { false } else if trimmed == "1" { true } else { panic!("Unable to parse the input ({}) to the boolean value", val.trim()) }
             }
         },
         None => panic!("attempts to read a 'Boolean' value from standard input, but no more tokens are available")
@@ -148,7 +137,7 @@ pub fn read_int() -> i32 {
     };
     match val.trim().parse() {
         Ok(v) => v,
-        Err(_) =>  panic!("Unable to parse the input ({}) to the int value", val.trim())
+        Err(_) => panic!("Unable to parse the input ({}) to the int value", val.trim())
     }
 }
 
@@ -159,7 +148,7 @@ pub fn read_double() -> f64 {
     };
     match val.trim().parse() {
         Ok(v) => v,
-        Err(_) =>  panic!("Unable to parse the input ({}) to the double value", val.trim())
+        Err(_) => panic!("Unable to parse the input ({}) to the double value", val.trim())
     }
 }
 
@@ -178,6 +167,19 @@ pub fn has_next_line() -> bool {
         None => { false }
         Some(_) => { true }
     }
+}
+
+pub fn is_empty() -> bool {
+    has_next()
+}
+
+fn read_next() -> Option<String> {
+    let val = match next() {
+        Some(val) => Some(val.to_string()),
+        None => None
+    };
+    increment_position();
+    val
 }
 
 fn has_next() -> bool {
@@ -205,21 +207,17 @@ fn next() -> Option<String> {
     string
 }
 
-fn increment_position() {
-    CACHED_BUFFER.with(|buffer| {
-        buffer.borrow_mut().position += 1;
-    });
-}
-
-pub fn is_empty() -> bool {
-    has_next()
-}
-
 fn initialize_buffer() -> InputBuffer {
     InputBuffer {
         lines: read_all_strings(),
         position: 0,
     }
+}
+
+fn increment_position() {
+    CACHED_BUFFER.with(|buffer| {
+        buffer.borrow_mut().position += 1;
+    });
 }
 
 struct InputBuffer {
