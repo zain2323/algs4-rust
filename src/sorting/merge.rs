@@ -8,57 +8,56 @@ Sorts the array entries using the Merge Sort Algorithm.
 fn merge<T: Ord + Copy>(arr: &mut Vec<T>, aux: &mut Vec<T>, lo: usize, mid: usize, hi: usize) {
     //     Copy a[lo..hi] to aux[lo..hi]
     for k in lo..=hi {
-        aux[k] =  arr[k];
+        aux[k] = arr[k];
     }
 
     let mut i = lo;
-    let mut j = mid+1;
+    let mut j = mid + 1;
     for k in lo..=hi {
         if i > mid {
-            arr[k] =  aux[j];
+            arr[k] = aux[j];
             j += 1;
-        }
-        else if j > hi {
-            arr[k] =  aux[i];
+        } else if j > hi {
+            arr[k] = aux[i];
             i += 1;
-        }
-        else if less(aux[j], aux[i]) {
-            arr[k] =  aux[j];
+        } else if less(aux[j], aux[i]) {
+            arr[k] = aux[j];
             j += 1;
-        }
-        else {
-            arr[k] =  aux[i];
+        } else {
+            arr[k] = aux[i];
             i += 1;
         }
     }
 }
 
-pub fn sort<T: Ord  + Copy >(arr: &mut Vec<T>) {
+pub fn sort<T: Ord + Copy>(arr: &mut Vec<T>) {
     let mut aux: Vec<T> = vec![arr[0]; arr.len()];
-    merge_sort(arr, &mut aux, 0, arr.len()-1);
+    merge_sort(arr, &mut aux, 0, arr.len() - 1);
 }
 
 fn merge_sort<T: Ord + Copy>(arr: &mut Vec<T>, aux: &mut Vec<T>, lo: usize, hi: usize) {
-    if hi <= lo{ return;}
+    if hi <= lo {
+        return;
+    }
     let mid = lo + (hi - lo) / 2;
     merge_sort(arr, aux, lo, mid);
-    merge_sort(arr, aux, mid+1, hi);
+    merge_sort(arr, aux, mid + 1, hi);
     merge(arr, aux, lo, mid, hi);
 }
 
-pub fn less<T: Ord>(v: T , w: T) -> bool {
+pub fn less<T: Ord>(v: T, w: T) -> bool {
     v.lt(&w)
 }
 
 // exchange arr[i] and arr[j]
-pub fn exch<T: Ord>(arr: &mut Vec<T>, i:usize, j:usize) {
+pub fn exch<T: Ord>(arr: &mut Vec<T>, i: usize, j: usize) {
     arr.swap(i, j);
 }
 
 // checks if the array is sorted?
 pub fn is_sorted<T: Ord + Copy>(list: &Vec<T>) -> bool {
     for i in 1..list.len() {
-        if less(list[i],list[i-1]) {
+        if less(list[i], list[i - 1]) {
             return false;
         }
     }

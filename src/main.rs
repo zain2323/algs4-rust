@@ -6,8 +6,8 @@ use std::io::stdin;
 pub mod io;
 
 fn main() {
-//    Use of any of the method to test the stdin functionality.
-//     cargo run < {file.txt}
+    //    Use of any of the method to test the stdin functionality.
+    //     cargo run < {file.txt}
 }
 
 fn read_line() {

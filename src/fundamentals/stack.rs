@@ -1,14 +1,14 @@
 #[derive(Clone)]
 pub struct Stack<T: Copy> {
     item: Vec<T>,
-    n: usize
+    n: usize,
 }
 
 impl<T: Copy> Stack<T> {
     pub fn new() -> Stack<T> {
         Stack {
             item: Vec::new(),
-            n: 0
+            n: 0,
         }
     }
 
@@ -32,7 +32,7 @@ impl<T: Copy> Stack<T> {
         self.n -= 1;
         match self.item.pop() {
             Some(item) => item,
-            None => panic!("Stack Underflow")
+            None => panic!("Stack Underflow"),
         }
     }
 
@@ -46,14 +46,14 @@ impl<T: Copy> Stack<T> {
     pub fn iter(&self) -> StackIterator<T> {
         StackIterator {
             stack: self.clone(),
-            index: self.n.clone()
+            index: self.n.clone(),
         }
     }
 }
 
 pub struct StackIterator<T: Copy> {
     stack: Stack<T>,
-    index: usize
+    index: usize,
 }
 
 impl<T: Copy> Iterator for StackIterator<T> {
@@ -76,7 +76,7 @@ impl<T: Copy> IntoIterator for &Stack<T> {
     fn into_iter(self) -> Self::IntoIter {
         StackIterator {
             stack: self.clone(),
-            index: self.n.clone()
+            index: self.n.clone(),
         }
     }
 }
@@ -145,6 +145,5 @@ mod tests {
             assert_eq!(item, counter);
             counter -= 1;
         }
-
     }
 }

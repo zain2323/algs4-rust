@@ -3,33 +3,30 @@ Sorts the array entries using the Merge Sort Algorithm.
 Uses the non-recursive bottom up approach
  */
 
-use std::cmp::min;
 use crate::sorting::utils::less;
+use std::cmp::min;
 
 // Merges the two sorted arrays
 fn merge<T: Ord + Copy>(arr: &mut Vec<T>, aux: &mut Vec<T>, lo: usize, mid: usize, hi: usize) {
     //     Copy a[lo..hi] to aux[lo..hi]
     for k in lo..=hi {
-        aux[k] =  arr[k];
+        aux[k] = arr[k];
     }
 
     let mut i = lo;
-    let mut j = mid+1;
+    let mut j = mid + 1;
     for k in lo..=hi {
         if i > mid {
-            arr[k] =  aux[j];
+            arr[k] = aux[j];
             j += 1;
-        }
-        else if j > hi {
-            arr[k] =  aux[i];
+        } else if j > hi {
+            arr[k] = aux[i];
             i += 1;
-        }
-        else if less(aux[j], aux[i]) {
-            arr[k] =  aux[j];
+        } else if less(aux[j], aux[i]) {
+            arr[k] = aux[j];
             j += 1;
-        }
-        else {
-            arr[k] =  aux[i];
+        } else {
+            arr[k] = aux[i];
             i += 1;
         }
     }

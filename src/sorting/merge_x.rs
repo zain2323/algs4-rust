@@ -2,7 +2,7 @@
 This is the optimized version of Merge Sort algorithm.
  */
 
-use crate::sorting::utils::{less, exch};
+use crate::sorting::utils::{exch, less};
 
 const CUTT_OFF: usize = 7;
 
@@ -10,26 +10,23 @@ const CUTT_OFF: usize = 7;
 fn merge<T: Ord + Copy>(arr: &mut Vec<T>, aux: &mut Vec<T>, lo: usize, mid: usize, hi: usize) {
     //     Copy a[lo..hi] to aux[lo..hi]
     for k in lo..=hi {
-        aux[k] =  arr[k];
+        aux[k] = arr[k];
     }
 
     let mut i = lo;
-    let mut j = mid+1;
+    let mut j = mid + 1;
     for k in lo..=hi {
         if i > mid {
-            arr[k] =  aux[j];
+            arr[k] = aux[j];
             j += 1;
-        }
-        else if j > hi {
-            arr[k] =  aux[i];
+        } else if j > hi {
+            arr[k] = aux[i];
             i += 1;
-        }
-        else if less(aux[j], aux[i]) {
-            arr[k] =  aux[j];
+        } else if less(aux[j], aux[i]) {
+            arr[k] = aux[j];
             j += 1;
-        }
-        else {
-            arr[k] =  aux[i];
+        } else {
+            arr[k] = aux[i];
             i += 1;
         }
     }
@@ -37,7 +34,7 @@ fn merge<T: Ord + Copy>(arr: &mut Vec<T>, aux: &mut Vec<T>, lo: usize, mid: usiz
 
 pub fn sort<T: Ord + Copy>(arr: &mut Vec<T>) {
     let mut aux: Vec<T> = vec![arr[0]; arr.len()];
-    merge_sort(&mut aux, arr, 0, arr.len()-1);
+    merge_sort(&mut aux, arr, 0, arr.len() - 1);
 }
 
 fn merge_sort<T: Ord + Copy>(arr: &mut Vec<T>, aux: &mut Vec<T>, lo: usize, hi: usize) {
@@ -47,9 +44,9 @@ fn merge_sort<T: Ord + Copy>(arr: &mut Vec<T>, aux: &mut Vec<T>, lo: usize, hi: 
     }
     let mid = lo + (hi - lo) / 2;
     merge_sort(aux, arr, lo, mid);
-    merge_sort(aux, arr, mid+1, hi);
+    merge_sort(aux, arr, mid + 1, hi);
 
-    if !less(arr[mid+1], arr[mid]) {
+    if !less(arr[mid + 1], arr[mid]) {
         for i in lo..=hi {
             aux[i] = arr[i];
         }
@@ -60,9 +57,9 @@ fn merge_sort<T: Ord + Copy>(arr: &mut Vec<T>, aux: &mut Vec<T>, lo: usize, hi: 
 
 // sort from a[lo] to a[hi] using insertion sort
 fn insertion_sort<T: Ord + Copy>(arr: &mut Vec<T>, lo: usize, hi: usize) {
-    for i in lo+1..=hi {
-        for j in (lo+1..=i).rev() {
-            if less(arr[j], arr[j-1]) {
+    for i in lo + 1..=hi {
+        for j in (lo + 1..=i).rev() {
+            if less(arr[j], arr[j - 1]) {
                 exch(arr, j, j - 1)
             }
         }
@@ -98,7 +95,7 @@ mod tests {
     #[test]
     fn test4_insertion_sort() {
         let mut list = vec![21, 24, 100, 199, 221, 1021];
-        insertion_sort(&mut list, 0 , 5);
+        insertion_sort(&mut list, 0, 5);
         assert_eq!(is_sorted(&list), true);
     }
 }

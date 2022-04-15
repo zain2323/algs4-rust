@@ -2,13 +2,13 @@
 Sorts the array entries using the Insertion Sort Algorithm.
  */
 
-use crate::sorting::utils::{less, exch};
+use crate::sorting::utils::{exch, less};
 
 pub fn sort<T: Ord + Copy>(arr: &mut Vec<T>) {
     let n = arr.len();
     for i in 1..n {
         for j in (1..=i).rev() {
-            if less(arr[j], arr[j-1]) {
+            if less(arr[j], arr[j - 1]) {
                 exch(arr, j, j - 1)
             }
         }

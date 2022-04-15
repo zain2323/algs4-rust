@@ -2,13 +2,13 @@
 Sorts the array entries using the Selection Sort Algorithm.
  */
 
-use crate::sorting::utils::{less, exch};
+use crate::sorting::utils::{exch, less};
 
 pub fn sort<T: Ord + Copy>(arr: &mut Vec<T>) {
     let n = arr.len();
     for i in 0..n {
         let mut min = i;
-        for j in i+1..n {
+        for j in i + 1..n {
             if less(arr[j], arr[min]) {
                 min = j;
             }

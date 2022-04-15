@@ -1,14 +1,14 @@
 #[derive(Clone)]
 pub struct Queue<T: Copy> {
     item: Vec<T>,
-    n: usize
+    n: usize,
 }
 
 impl<T: Copy> Queue<T> {
     pub fn new() -> Queue<T> {
         Queue {
             item: Vec::new(),
-            n: 0
+            n: 0,
         }
     }
 
@@ -43,14 +43,14 @@ impl<T: Copy> Queue<T> {
     pub fn iter(&self) -> QueueIterator<T> {
         QueueIterator {
             queue: self.clone(),
-            index: 0 as usize
+            index: 0 as usize,
         }
     }
 }
 
 pub struct QueueIterator<T: Copy> {
     queue: Queue<T>,
-    index: usize
+    index: usize,
 }
 
 impl<T: Copy> Iterator for QueueIterator<T> {
@@ -74,7 +74,7 @@ impl<T: Copy> IntoIterator for &Queue<T> {
     fn into_iter(self) -> Self::IntoIter {
         QueueIterator {
             queue: self.clone(),
-            index: self.n.clone()
+            index: self.n.clone(),
         }
     }
 }

@@ -9,7 +9,7 @@ pub fn read_line() -> String {
     let stdin = io::stdin();
     match stdin.read_line(&mut buffer) {
         Ok(..) => buffer,
-        Err(e) => panic!("{:?}", e)
+        Err(e) => panic!("{:?}", e),
     }
 }
 
@@ -18,7 +18,7 @@ pub fn read_all_lines() -> Vec<String> {
     for line_result in io::stdin().lock().lines() {
         match line_result {
             Ok(line) => all_lines.push(line),
-            Err(e) => panic!("{:?}", e)
+            Err(e) => panic!("{:?}", e),
         }
     }
     all_lines
@@ -65,11 +65,13 @@ pub fn read_all_ints() -> Vec<i32> {
     for line in lines {
         let split: Vec<&str> = line.split(' ').collect();
         for int in split {
-            if int.trim() != ""
-            {
+            if int.trim() != "" {
                 let val = match int.trim().parse() {
                     Ok(v) => v,
-                    Err(_) => panic!("Unable to parse the input ({}) to the 32bit integer", int.trim())
+                    Err(_) => panic!(
+                        "Unable to parse the input ({}) to the 32bit integer",
+                        int.trim()
+                    ),
                 };
                 all_ints.push(val);
             }
@@ -84,11 +86,13 @@ pub fn read_all_longs() -> Vec<i64> {
     for line in lines {
         let split: Vec<&str> = line.split(' ').collect();
         for long in split {
-            if long.trim() != ""
-            {
+            if long.trim() != "" {
                 let val = match long.trim().parse() {
                     Ok(v) => v,
-                    Err(_) => panic!("Unable to parse the input ({}) to the 64bit integer", long.trim())
+                    Err(_) => panic!(
+                        "Unable to parse the input ({}) to the 64bit integer",
+                        long.trim()
+                    ),
                 };
                 all_longs.push(val);
             }
@@ -103,11 +107,13 @@ pub fn read_all_doubles() -> Vec<f64> {
     for line in lines {
         let split: Vec<&str> = line.split(' ').collect();
         for double in split {
-            if double.trim() != ""
-            {
+            if double.trim() != "" {
                 let val = match double.trim().parse() {
                     Ok(v) => v,
-                    Err(_) => panic!("Unable to parse the input ({}) to the 64bit floating point value", double.trim())
+                    Err(_) => panic!(
+                        "Unable to parse the input ({}) to the 64bit floating point value",
+                        double.trim()
+                    ),
                 };
                 all_doubles.push(val);
             }
@@ -137,7 +143,10 @@ pub fn read_int() -> i32 {
     };
     match val.trim().parse() {
         Ok(v) => v,
-        Err(_) => panic!("Unable to parse the input ({}) to the int value", val.trim())
+        Err(_) => panic!(
+            "Unable to parse the input ({}) to the int value",
+            val.trim()
+        ),
     }
 }
 
@@ -148,7 +157,10 @@ pub fn read_double() -> f64 {
     };
     match val.trim().parse() {
         Ok(v) => v,
-        Err(_) => panic!("Unable to parse the input ({}) to the double value", val.trim())
+        Err(_) => panic!(
+            "Unable to parse the input ({}) to the double value",
+            val.trim()
+        ),
     }
 }
 
@@ -164,8 +176,8 @@ pub fn has_next_line() -> bool {
     let stdin = io::stdin();
     let mut lines_iter = stdin.lock().lines().map(|l| l.unwrap());
     match lines_iter.next() {
-        None => { false }
-        Some(_) => { true }
+        None => false,
+        Some(_) => true,
     }
 }
 
@@ -176,7 +188,7 @@ pub fn is_empty() -> bool {
 fn read_next() -> Option<String> {
     let val = match next() {
         Some(val) => Some(val.to_string()),
-        None => None
+        None => None,
     };
     increment_position();
     val
@@ -188,7 +200,7 @@ fn has_next() -> bool {
         let item = borrowed_buffer.lines.get(borrowed_buffer.position);
         match item {
             Some(_) => false,
-            None => true
+            None => true,
         }
     })
 }
@@ -198,10 +210,8 @@ fn next() -> Option<String> {
         let buffer_mut = buffer.borrow_mut();
         let item = buffer_mut.lines.get(buffer_mut.position);
         match item {
-            Some(val) => {
-                Some(val.to_string())
-            }
-            None => None
+            Some(val) => Some(val.to_string()),
+            None => None,
         }
     });
     string

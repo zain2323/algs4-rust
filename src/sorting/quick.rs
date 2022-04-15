@@ -1,24 +1,25 @@
+use crate::sorting::utils::{exch, less};
 use rand::seq::SliceRandom;
 use rand::thread_rng;
-use crate::sorting::utils::{exch, less};
 
 pub fn sort<T: Ord + Copy>(arr: &mut Vec<T>) {
     let mut rng = thread_rng();
     arr.shuffle(&mut rng);
-    quick_sort(arr, 0, arr.len()-1);
+    quick_sort(arr, 0, arr.len() - 1);
 }
 
 fn quick_sort<T: Ord + Copy>(arr: &mut Vec<T>, lo: usize, hi: usize) {
-    if hi <= lo {return;}
+    if hi <= lo {
+        return;
+    }
     let j = partition(arr, lo, hi);
     if j > 0 {
-        quick_sort(arr, lo, j-1);
-    }
-    else {
+        quick_sort(arr, lo, j - 1);
+    } else {
         quick_sort(arr, lo, j);
     }
 
-    quick_sort(arr, j+1, hi);
+    quick_sort(arr, j + 1, hi);
 }
 
 fn partition<T: Ord + Copy>(arr: &mut Vec<T>, lo: usize, hi: usize) -> usize {
@@ -28,15 +29,21 @@ fn partition<T: Ord + Copy>(arr: &mut Vec<T>, lo: usize, hi: usize) -> usize {
     loop {
         i += 1;
         while less(arr[i], v) {
-            if i == hi {break}
+            if i == hi {
+                break;
+            }
             i += 1;
         }
         j -= 1;
         while less(v, arr[j]) {
-            if j == lo {break}
+            if j == lo {
+                break;
+            }
             j -= 1;
         }
-        if i >= j {break}
+        if i >= j {
+            break;
+        }
         exch(arr, i, j);
     }
     exch(arr, lo, j);

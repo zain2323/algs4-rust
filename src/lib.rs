@@ -1,11 +1,11 @@
-pub mod sorting;
 pub mod fundamentals;
 pub mod io;
+pub mod sorting;
 
 #[cfg(test)]
 mod tests {
-    use crate::sorting::insertion;
     use crate::fundamentals::stack::Stack;
+    use crate::sorting::insertion;
 
     #[test]
     fn testing_sorting() {
