@@ -1,3 +1,4 @@
+pub mod heap_sort;
 pub mod insertion;
 pub mod merge;
 pub mod merge_bu;

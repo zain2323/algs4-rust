@@ -4,6 +4,7 @@ pub mod sorting;
 
 #[cfg(test)]
 mod tests {
+    use crate::fundamentals;
     use crate::fundamentals::stack::Stack;
     use crate::sorting::insertion;
 
@@ -29,5 +30,15 @@ mod tests {
             assert_eq!(item, counter);
             counter -= 1;
         }
+    }
+
+    #[test]
+    fn testing_heap() {
+        let mut heap = fundamentals::heap::MaxHeap::<i32>::new();
+        assert_eq!(heap.is_empty(), true);
+        heap.insert(1);
+        heap.insert(2);
+        assert_eq!(heap.del_max(), 2);
+        assert_eq!(heap.del_max(), 1);
     }
 }
