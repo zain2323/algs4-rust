@@ -1,6 +1,5 @@
 /*
 Max and Min Priority Queue
-
  */
 
 struct Heap<T: Ord + Copy> {
