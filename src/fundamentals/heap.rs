@@ -2,9 +2,15 @@
 Max and Min Priority Queue
  */
 
+#[derive(Clone)]
 struct Heap<T: Ord + Copy> {
     pq: Vec<T>,
     n: usize,
+}
+
+pub struct HeapIterator<T: Ord + Copy> {
+    heap: Heap<T>,
+    current_idx: usize,
 }
 
 impl<T: Ord + Copy> Heap<T> {
@@ -72,6 +78,23 @@ impl<T: Ord + Copy> Heap<T> {
             k = j
         }
     }
+
+    fn iter(&mut self) -> Vec<T> {
+        self.pq[1..].to_vec()
+    }
+}
+
+impl<T: Ord + Copy> Iterator for HeapIterator<T> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.current_idx <= 0 {
+            return None;
+        }
+        let item = self.heap.pq[self.current_idx];
+        self.current_idx -= 1;
+        Some(item)
+    }
 }
 
 pub struct MaxHeap<T: Ord + Copy> {
@@ -105,6 +128,10 @@ impl<T: Ord + Copy> MaxHeap<T> {
     pub fn del_max(&mut self) -> T {
         self.heap.del(less_max)
     }
+
+    pub fn iter(&mut self) -> Vec<T> {
+        self.heap.iter()
+    }
 }
 
 impl<T: Ord + Copy> MinHeap<T> {
@@ -131,6 +158,10 @@ impl<T: Ord + Copy> MinHeap<T> {
     pub fn del_min(&mut self) -> T {
         self.heap.del(less_min)
     }
+
+    pub fn iter(&mut self) -> Vec<T> {
+        self.heap.iter()
+    }
 }
 
 fn less_max<T: Ord + Copy>(i: T, j: T) -> bool {
@@ -144,6 +175,8 @@ fn less_min<T: Ord + Copy>(i: T, j: T) -> bool {
 #[cfg(test)]
 mod tests {
     use crate::fundamentals::heap;
+    use crate::fundamentals::heap::less_max;
+
     #[test]
     fn max_heap() {
         let mut heap = heap::MaxHeap::<i32>::new();
@@ -161,6 +194,23 @@ mod tests {
         assert_eq!(heap.del_max(), 2);
         assert_eq!(heap.del_max(), 1);
         assert_eq!(heap.is_empty(), true);
+    }
+
+    #[test]
+    fn min_heap_iter() {
+        let mut heap = heap::MinHeap::<i32>::new();
+        heap.insert(1);
+        heap.insert(2);
+        heap.insert(3);
+        heap.insert(4);
+        heap.insert(5);
+
+        let heap_iter = heap.iter();
+        let mut counter = 1;
+        for i in heap_iter {
+            assert_eq!(i, counter);
+            counter += 1;
+        }
     }
 
     #[test]
