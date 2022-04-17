@@ -1,11 +1,11 @@
 use std::cmp::max;
 
-const TEN: isize = 10;
-pub fn multiply(num1: isize, num2: isize) -> isize {
+const TEN: i128 = 10;
+pub fn multiply(num1: i128, num2: i128) -> i128 {
     karatsuba_algo(num1, num2)
 }
 
-fn karatsuba_algo(num1: isize, num2: isize) -> isize {
+fn karatsuba_algo(num1: i128, num2: i128) -> i128 {
     if num1 < 10 || num2 < 10 {
         return num1 * num2;
     }
@@ -23,12 +23,13 @@ fn karatsuba_algo(num1: isize, num2: isize) -> isize {
 
     let ac = karatsuba_algo(a.parse().unwrap(), c.parse().unwrap());
     let bd = karatsuba_algo(b.parse().unwrap(), d.parse().unwrap());
-    let a_b: isize = a.parse::<isize>().unwrap() + b.parse::<isize>().unwrap();
-    let c_d: isize = c.parse::<isize>().unwrap() + d.parse::<isize>().unwrap();
-    let mut ad_bc = karatsuba_algo(a_b, c_d) - (ac + bd);
+    let a_b: i128 = a.parse::<i128>().unwrap() + b.parse::<i128>().unwrap();
+    let c_d: i128 = c.parse::<i128>().unwrap() + d.parse::<i128>().unwrap();
+    let ad_bc = karatsuba_algo(a_b, c_d) - (ac + bd);
 
     let m = n / 2 + n % 2;
     (TEN.pow(2 * m as u32) * ac) + (TEN.pow(m as u32) * ad_bc) + (bd)
+    
 }
 
 fn normalize(mut a: String, n: usize) -> String {
@@ -44,11 +45,25 @@ mod tests {
     use crate::context::karatsuba_multiplication::multiply;
 
     #[test]
-    fn test1() {
-        // 3141592653589793238462643383279502884197169399375105820974944592
-        // 2718281828459045235360287471352662497757247093699959574966967627
-        let n1: isize = 314159265;
-        let n2: isize = 314159265;
+    fn test_1() {
+        let n1: i128 = 314159265;
+        let n2: i128 = 314159265;
+        let ans = multiply(n1, n2);
+        assert_eq!(ans, n1 * n2);
+    }
+
+    #[test]
+    fn test_2() {
+        let n1: i128 = 3141592653589793232;
+        let n2: i128 = 2718281828459045233;
+        let ans = multiply(n1, n2);
+        assert_eq!(ans, n1 * n2);
+    }
+    
+    #[test]
+    fn test_3() {
+        let n1: i128 = 123456789;
+        let n2: i128 = 101112131415;
         let ans = multiply(n1, n2);
         assert_eq!(ans, n1 * n2);
     }
