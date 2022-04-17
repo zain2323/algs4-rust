@@ -29,7 +29,6 @@ fn karatsuba_algo(num1: i128, num2: i128) -> i128 {
 
     let m = n / 2 + n % 2;
     (TEN.pow(2 * m as u32) * ac) + (TEN.pow(m as u32) * ad_bc) + (bd)
-    
 }
 
 fn normalize(mut a: String, n: usize) -> String {
@@ -59,7 +58,7 @@ mod tests {
         let ans = multiply(n1, n2);
         assert_eq!(ans, n1 * n2);
     }
-    
+
     #[test]
     fn test_3() {
         let n1: i128 = 123456789;
