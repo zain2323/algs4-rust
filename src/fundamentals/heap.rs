@@ -2,15 +2,17 @@
 Max and Min Priority Queue
  */
 
-#[derive(Clone)]
 struct Heap<T: Ord + Copy> {
     pq: Vec<T>,
     n: usize,
 }
 
-pub struct HeapIterator<T: Ord + Copy> {
+pub struct MaxHeap<T: Ord + Copy> {
     heap: Heap<T>,
-    current_idx: usize,
+}
+
+pub struct MinHeap<T: Ord + Copy> {
+    heap: Heap<T>,
 }
 
 impl<T: Ord + Copy> Heap<T> {
@@ -82,26 +84,6 @@ impl<T: Ord + Copy> Heap<T> {
     fn iter(&mut self) -> Vec<T> {
         self.pq[1..].to_vec()
     }
-}
-
-impl<T: Ord + Copy> Iterator for HeapIterator<T> {
-    type Item = T;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.current_idx <= 0 {
-            return None;
-        }
-        let item = self.heap.pq[self.current_idx];
-        self.current_idx -= 1;
-        Some(item)
-    }
-}
-
-pub struct MaxHeap<T: Ord + Copy> {
-    heap: Heap<T>,
-}
-pub struct MinHeap<T: Ord + Copy> {
-    heap: Heap<T>,
 }
 
 impl<T: Ord + Copy> MaxHeap<T> {
