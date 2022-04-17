@@ -16,20 +16,19 @@ fn karatsuba_algo(num1: isize, num2: isize) -> isize {
     num1_str = normalize(num1_str, n);
     num2_str = normalize(num2_str, n);
 
-    let a = &num1_str[0..n/2];
-    let b = &num1_str[n/2..];
-    let c = &num2_str[0..n/2];
-    let d = &num2_str[n/2..];
+    let a = &num1_str[0..n / 2];
+    let b = &num1_str[n / 2..];
+    let c = &num2_str[0..n / 2];
+    let d = &num2_str[n / 2..];
 
     let ac = karatsuba_algo(a.parse().unwrap(), c.parse().unwrap());
     let bd = karatsuba_algo(b.parse().unwrap(), d.parse().unwrap());
     let a_b: isize = a.parse::<isize>().unwrap() + b.parse::<isize>().unwrap();
-    let c_d: isize = c.parse::<isize>().unwrap()  + d.parse::<isize>().unwrap();
-    let mut ad_bc = karatsuba_algo( a_b, c_d);
-    ad_bc = ad_bc - ac - bd;
+    let c_d: isize = c.parse::<isize>().unwrap() + d.parse::<isize>().unwrap();
+    let mut ad_bc = karatsuba_algo(a_b, c_d) - (ac + bd);
 
-    let m = n/2 + n%2;
-    (TEN.pow(2*m as u32) * ac) + (TEN.pow(m as u32) * ad_bc) + (bd)
+    let m = n / 2 + n % 2;
+    (TEN.pow(2 * m as u32) * ac) + (TEN.pow(m as u32) * ad_bc) + (bd)
 }
 
 fn normalize(mut a: String, n: usize) -> String {
@@ -51,6 +50,6 @@ mod tests {
         let n1: isize = 314159265;
         let n2: isize = 314159265;
         let ans = multiply(n1, n2);
-        println!("{:}", ans);
+        assert_eq!(ans, n1 * n2);
     }
 }
