@@ -2,8 +2,6 @@
 Max and Min Index Priority Queue
  */
 
-use std::io::stdout;
-
 struct Heap<T: Ord + Copy> {
     // this hold indices
     pq: Vec<usize>,
@@ -12,9 +10,9 @@ struct Heap<T: Ord + Copy> {
     n: usize,
 }
 
-// pub struct MaxHeap<T: Ord + Copy> {
-//     heap: Heap<T>,
-// }
+pub struct MaxHeap<T: Ord + Copy> {
+    heap: Heap<T>,
+}
 
 pub struct MinHeap<T: Ord + Copy> {
     heap: Heap<T>,
@@ -45,7 +43,7 @@ impl<T: Ord + Copy> Heap<T> {
         if self.is_empty() {
             self.keys.insert(0, key);
             self.pq.insert(0, usize::MAX);
-            self.qp.insert(0, -2);
+            self.qp.insert(0, -1);
         }
         self.n += 1;
         self.keys.insert(self.n, key);
@@ -57,21 +55,40 @@ impl<T: Ord + Copy> Heap<T> {
     // Change the item associated with k
     fn change(&mut self, k: usize, key: T, less: fn(T, T) -> bool) {
         self.inverse();
+        // If the old key is smaller than the new key then sink method will reheapify the heap.
+        // If the old key is greater than the new key then swim method will reheapify the heap.
         if self.contains(k) {
-            let idx = self.get_pos(k);
+            let idx = self.get_pos(k) + 1;
+            let old_key = self.keys[idx];
             self.keys[idx] = key;
-            self.swim(self.n, less);
+            if old_key < key {
+                self.sink(1, less);
+            } else if old_key > key {
+                self.swim(self.size(), less)
+            }
         }
     }
 
     // Is k associated with some item
-    fn contains(&self, k: usize) -> bool {
-        k < self.size()
+    fn contains(&mut self, k: usize) -> bool {
+        if k < self.size() {
+            self.inverse();
+            return self.qp[k] != -1;
+        }
+        return false;
     }
 
     // Remove k and its associated item
-    fn delete(&mut self, k: usize) {
-        todo!()
+    fn delete(&mut self, k: usize, less: fn(T, T) -> bool) {
+        self.inverse();
+        if self.contains(k) {
+            let idx = self.get_pos(k) + 1;
+            self.keys.remove(idx);
+            self.pq.remove(idx);
+            self.qp[k] = -1;
+            self.n -= 1;
+            self.sink(1, less)
+        }
     }
 
     // Remove the minimal or maximal item and returns its index
@@ -151,40 +168,56 @@ impl<T: Ord + Copy> Heap<T> {
         (self.qp[k] - 1) as usize
     }
 
-    // fn iter(&mut self) -> Vec<T> {
-    //     self.pq[1..].to_vec()
-    // }
+    fn iter(&mut self) -> Vec<T> {
+        self.keys[1..].to_vec()
+    }
 }
 
-// impl<T: Ord + Copy> MaxHeap<T> {
-//     pub fn new() -> MaxHeap<T> {
-//         MaxHeap { heap: Heap::new() }
-//     }
-//
-//     pub fn insert(&mut self, key: T) {
-//         self.heap.insert(key, less_max);
-//     }
-//
-//     pub fn is_empty(&self) -> bool {
-//         self.heap.is_empty()
-//     }
-//
-//     pub fn size(&self) -> usize {
-//         self.heap.size()
-//     }
-//
-//     pub fn peek(&self) -> T {
-//         self.heap.peek()
-//     }
-//
-//     pub fn del_max(&mut self) -> T {
-//         self.heap.del(less_max)
-//     }
-//
-//     pub fn iter(&mut self) -> Vec<T> {
-//         self.heap.iter()
-//     }
-// }
+impl<T: Ord + Copy> MaxHeap<T> {
+    pub fn new() -> MaxHeap<T> {
+        MaxHeap { heap: Heap::new() }
+    }
+
+    pub fn insert(&mut self, k: usize, key: T) {
+        self.heap.insert(k, key, less_max);
+    }
+
+    pub fn change(&mut self, k: usize, key: T) {
+        self.heap.change(k, key, less_max);
+    }
+
+    pub fn contains(&mut self, k: usize) -> bool {
+        self.heap.contains(k)
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.heap.is_empty()
+    }
+
+    pub fn size(&self) -> usize {
+        self.heap.size()
+    }
+
+    pub fn max(&self) -> T {
+        self.heap.peek()
+    }
+
+    pub fn max_index(&self) -> usize {
+        self.heap.index()
+    }
+
+    pub fn del_max(&mut self) -> usize {
+        self.heap.del(less_min)
+    }
+
+    pub fn delete(&mut self, k: usize) {
+        self.heap.delete(k, less_min);
+    }
+
+    pub fn iter(&mut self) -> Vec<T> {
+        self.heap.iter()
+    }
+}
 
 impl<T: Ord + Copy> MinHeap<T> {
     pub fn new() -> MinHeap<T> {
@@ -199,7 +232,7 @@ impl<T: Ord + Copy> MinHeap<T> {
         self.heap.change(k, key, less_min);
     }
 
-    pub fn contains(&self, k: usize) -> bool {
+    pub fn contains(&mut self, k: usize) -> bool {
         self.heap.contains(k)
     }
 
@@ -224,14 +257,11 @@ impl<T: Ord + Copy> MinHeap<T> {
     }
 
     pub fn delete(&mut self, k: usize) {
-        self.heap.delete(k);
+        self.heap.delete(k, less_min);
     }
-    // pub fn iter(&mut self) -> Vec<T> {
-    //     self.heap.iter()
-    // }
 
-    pub fn get_pos(&self, k: usize) -> usize {
-        self.heap.get_pos(k)
+    pub fn iter(&mut self) -> Vec<T> {
+        self.heap.iter()
     }
 }
 
@@ -256,34 +286,63 @@ mod tests {
         heap.insert(1, "C");
         heap.insert(2, "E");
         heap.insert(4, "A");
-        heap.change(3, "B");
 
-        let mut pos = heap.get_pos(0);
-        println!("{}", pos);
-        pos = heap.get_pos(1);
-        println!("{}", pos);
-        pos = heap.get_pos(2);
-        println!("{}", pos);
-        pos = heap.get_pos(3);
-        println!("{}", pos);
-        pos = heap.get_pos(4);
-        println!("{}", pos);
         assert_eq!(heap.contains(1), true);
         assert_eq!(heap.contains(2), true);
         assert_eq!(heap.contains(3), true);
         assert_eq!(heap.contains(4), true);
         assert_eq!(heap.contains(0), true);
-        println!("size: {}", heap.size());
         assert_eq!(heap.contains(5), false);
         assert_eq!(heap.contains(6), false);
         assert_eq!(heap.contains(7), false);
-        // assert_eq!(heap.is_empty(), false);
-        // assert_eq!(heap.size(), 5);
-        // assert_eq!(heap.del_min(), 4);
-        // assert_eq!(heap.del_min(), 1);
-        // assert_eq!(heap.del_min(), 3);
-        // assert_eq!(heap.del_min(), 2);
-        // assert_eq!(heap.del_min(), 0);
-        // assert_eq!(heap.is_empty(), true);
+
+        assert_eq!(heap.is_empty(), false);
+        assert_eq!(heap.size(), 5);
+    }
+
+    #[test]
+    fn changing_key() {
+        let mut heap = index_min_pq::MinHeap::<&str>::new();
+        assert_eq!(heap.is_empty(), true);
+        heap.insert(3, "D");
+        heap.insert(0, "F");
+        heap.insert(1, "C");
+        heap.insert(2, "E");
+        heap.insert(4, "A");
+        // Changing Key 'D' to 'B' and new key is smaller
+        heap.change(3, "B");
+
+        // A will be deleted
+        assert_eq!(heap.del_min(), 4);
+        // B will be deleted
+        assert_eq!(heap.del_min(), 3);
+        // C will be deleted
+        assert_eq!(heap.del_min(), 1);
+        // E will be deleted
+        assert_eq!(heap.del_min(), 2);
+        // F will be deleted
+        assert_eq!(heap.del_min(), 0);
+
+        // Checking if the heap is empty after deleting all the keys.
+        assert_eq!(heap.is_empty(), true);
+    }
+
+    #[test]
+    fn deleting_key_by_index() {
+        let mut heap = index_min_pq::MinHeap::<&str>::new();
+        assert_eq!(heap.is_empty(), true);
+        heap.insert(3, "D");
+        heap.insert(0, "F");
+        heap.insert(1, "C");
+        heap.insert(2, "E");
+        heap.insert(4, "A");
+
+        heap.delete(1);
+        assert_eq!(heap.contains(1), false);
+        assert_eq!(heap.contains(3), true);
+        assert_eq!(heap.contains(10), false);
+
+        assert_eq!(heap.min(), "A");
+        assert_eq!(heap.min_index(), 4);
     }
 }
