@@ -199,11 +199,11 @@ mod tests {
     fn min_heap() {
         let mut heap = heap::MinHeap::<i32>::new();
         assert_eq!(heap.is_empty(), true);
-        heap.insert(1);
-        heap.insert(2);
-        heap.insert(3);
-        heap.insert(4);
         heap.insert(5);
+        heap.insert(4);
+        heap.insert(3);
+        heap.insert(2);
+        heap.insert(1);
         assert_eq!(heap.is_empty(), false);
         assert_eq!(heap.size(), 5);
         assert_eq!(heap.del_min(), 1);
