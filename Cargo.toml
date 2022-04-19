@@ -4,6 +4,16 @@ version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "algs4_rust"
+path = "src/lib.rs"
 
+[[bin]]
+name = "multiway_merge_client"
+path = "src/bin/multiway_merge_client.rs"
+
+[[bin]]
+name = "io_client"
+path = "src/bin/io_client.rs"
 [dependencies]
 rand = "0.8.4"

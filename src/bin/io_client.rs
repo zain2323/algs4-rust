@@ -2,7 +2,7 @@
 Tests the io parts of the library.
  */
 use algs4_rust::context::convex_hull::{graham_scan, Point};
-pub mod io;
+use algs4_rust::io;
 
 fn main() {
     //    Use of any of the method to test the stdin functionality.
