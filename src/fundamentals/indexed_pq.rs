@@ -2,7 +2,7 @@
 Max and Min Index Priority Queue
  */
 
-struct Heap<T: Ord + Clone> {
+struct Heap<T: Ord + Clone + Default> {
     // this hold indices
     pq: Vec<usize>,
     keys: Vec<T>,
@@ -10,20 +10,20 @@ struct Heap<T: Ord + Clone> {
     n: usize,
 }
 
-pub struct MaxHeap<T: Ord + Clone> {
+pub struct MaxHeap<T: Ord + Clone + Default> {
     heap: Heap<T>,
 }
 
-pub struct MinHeap<T: Ord + Clone> {
+pub struct MinHeap<T: Ord + Clone + Default> {
     heap: Heap<T>,
 }
 
-impl<T: Ord + Clone> Heap<T> {
-    fn new() -> Heap<T> {
+impl<T: Ord + Clone + Default> Heap<T> {
+    fn new(n: usize) -> Heap<T> {
         Heap {
-            pq: Vec::new(),
-            keys: Vec::new(),
-            qp: Vec::new(),
+            pq: vec![0; n],
+            keys: vec![Default::default(); n],
+            qp: vec![-1; n],
             n: 0,
         }
     }
@@ -43,12 +43,11 @@ impl<T: Ord + Clone> Heap<T> {
         if self.is_empty() {
             self.keys.insert(0, key.clone());
             self.pq.insert(0, usize::MAX);
-            self.qp.insert(0, -1);
         }
         self.n += 1;
-        self.keys.insert(self.n, key.clone());
-        self.pq.insert(self.n, k);
-        self.qp.insert(self.n, k as isize);
+        self.keys[k] = key.clone();
+        self.pq[self.n] = k;
+        self.qp[k] = self.n as isize;
         self.swim(self.n, less);
     }
 
@@ -71,11 +70,7 @@ impl<T: Ord + Clone> Heap<T> {
 
     // Is k associated with some item
     fn contains(&mut self, k: usize) -> bool {
-        if k < self.size() {
-            self.inverse();
-            return self.qp[k] != -1;
-        }
-        return false;
+        self.qp[k] != -1
     }
 
     // Remove k and its associated item
@@ -95,10 +90,10 @@ impl<T: Ord + Clone> Heap<T> {
     fn del(&mut self, less: fn(T, T) -> bool) -> usize {
         let index = self.index();
         self.exch(1, self.pq.len() - 1);
-        self.keys.remove(self.keys.len() - 1);
-        self.pq.remove(self.pq.len() - 1);
         self.n -= 1;
         self.sink(1, less);
+        self.keys[self.pq[self.n + 1]] = Default::default();
+        self.qp[self.pq[self.n + 1]] = -1;
         index
     }
 
@@ -107,7 +102,7 @@ impl<T: Ord + Clone> Heap<T> {
         if self.is_empty() {
             panic!("Heap is empty")
         }
-        self.keys[1].clone()
+        self.keys[self.index()].clone()
     }
 
     // Returns the minimal or maximal item index
@@ -173,9 +168,9 @@ impl<T: Ord + Clone> Heap<T> {
     }
 }
 
-impl<T: Ord + Clone> MaxHeap<T> {
-    pub fn new() -> MaxHeap<T> {
-        MaxHeap { heap: Heap::new() }
+impl<T: Ord + Clone + Default> MaxHeap<T> {
+    pub fn new(n: usize) -> MaxHeap<T> {
+        MaxHeap { heap: Heap::new(n) }
     }
 
     pub fn insert(&mut self, k: usize, key: T) {
@@ -219,9 +214,9 @@ impl<T: Ord + Clone> MaxHeap<T> {
     }
 }
 
-impl<T: Ord + Clone> MinHeap<T> {
-    pub fn new() -> MinHeap<T> {
-        MinHeap { heap: Heap::new() }
+impl<T: Ord + Clone + Default> MinHeap<T> {
+    pub fn new(n: usize) -> MinHeap<T> {
+        MinHeap { heap: Heap::new(n) }
     }
 
     pub fn insert(&mut self, k: usize, key: T) {
@@ -279,7 +274,7 @@ mod tests {
 
     #[test]
     fn min_heap() {
-        let mut heap = indexed_pq::MinHeap::<&str>::new();
+        let mut heap = indexed_pq::MinHeap::<&str>::new(5);
         assert_eq!(heap.is_empty(), true);
         heap.insert(3, "D");
         heap.insert(0, "F");
@@ -302,7 +297,7 @@ mod tests {
 
     #[test]
     fn changing_key() {
-        let mut heap = indexed_pq::MinHeap::<&str>::new();
+        let mut heap = indexed_pq::MinHeap::<&str>::new(5);
         assert_eq!(heap.is_empty(), true);
         heap.insert(3, "D");
         heap.insert(0, "F");
@@ -329,7 +324,7 @@ mod tests {
 
     #[test]
     fn deleting_key_by_index() {
-        let mut heap = indexed_pq::MinHeap::<&str>::new();
+        let mut heap = indexed_pq::MinHeap::<&str>::new(5);
         assert_eq!(heap.is_empty(), true);
         heap.insert(3, "D");
         heap.insert(0, "F");

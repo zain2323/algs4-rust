@@ -14,7 +14,7 @@ fn main() {
 
 fn merge(mut streams: Vec<File>) {
     let n = streams.len();
-    let mut heap = indexed_pq::MinHeap::<String>::new();
+    let mut heap = indexed_pq::MinHeap::<String>::new(n);
     let mut contents = String::new();
     for i in 0..n {
         streams[i].read_to_string(&mut contents);
