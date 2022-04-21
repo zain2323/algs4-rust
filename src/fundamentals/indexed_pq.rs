@@ -5,7 +5,7 @@ Max and Min Index Priority Queue
 struct Heap<T: Ord + Clone + Default> {
     // this hold indices
     pq: Vec<usize>,
-    keys: Vec<T>,
+    keys: Vec<Option<T>>,
     qp: Vec<isize>,
     n: usize,
 }
@@ -22,7 +22,7 @@ impl<T: Ord + Clone + Default> Heap<T> {
     fn new(n: usize) -> Heap<T> {
         Heap {
             pq: vec![0; n + 1],
-            keys: vec![Default::default(); n + 1],
+            keys: vec![Some(Default::default()); n + 1],
             qp: vec![-1; n + 1],
             n: 0,
         }
@@ -41,7 +41,7 @@ impl<T: Ord + Clone + Default> Heap<T> {
     // Insert item and associate it with k
     fn insert(&mut self, k: usize, key: T, less: fn(T, T) -> bool) {
         self.n += 1;
-        self.keys[k] = key.clone();
+        self.keys[k] = Some(key.clone());
         self.pq[self.n] = k;
         self.qp[k] = self.n as isize;
         self.swim(self.n, less);
@@ -55,12 +55,12 @@ impl<T: Ord + Clone + Default> Heap<T> {
         if self.contains(k) {
             let idx = self.get_pos(k) + 1;
             let old_key = self.keys[idx].clone();
-            self.keys[idx] = key.clone();
-            if old_key < key {
-                self.sink(1, less);
-            } else if old_key > key {
-                self.swim(self.size(), less)
-            }
+            self.keys[idx] = Some(key.clone());
+            // if old_key < key {
+            //     self.sink(1, less);
+            // } else if old_key > key {
+            //     self.swim(self.size(), less)
+            // }
         }
     }
 
@@ -89,7 +89,7 @@ impl<T: Ord + Clone + Default> Heap<T> {
         self.n -= 1;
         self.sink(1, less);
         let idx = self.pq[self.n + 1];
-        self.keys[idx] = Default::default();
+        self.keys[idx] = None;
         self.qp[idx] = -1;
         index
     }
@@ -99,7 +99,7 @@ impl<T: Ord + Clone + Default> Heap<T> {
         if self.is_empty() {
             panic!("Heap is empty")
         }
-        self.keys[self.index()].clone()
+        self.keys[self.index()].clone().expect("None")
     }
 
     // Returns the minimal or maximal item index
@@ -112,29 +112,57 @@ impl<T: Ord + Clone + Default> Heap<T> {
     }
 
     fn swim(&mut self, mut k: usize, less: fn(T, T) -> bool) {
-        while k > 1
-            && less(
-                self.keys[self.pq[k / 2]].clone(),
-                self.keys[self.pq[k]].clone(),
+        while k > 1 {
+            let key_1 = match self.keys[self.pq[k / 2]].clone() {
+                Some(v) => v,
+                None => continue
+            };
+
+            let key_2 = match self.keys[self.pq[k]].clone() {
+                Some(v) => v,
+                None => continue
+            };
+            if less(
+                key_1,
+                key_2,
             )
         {
             self.exch(k / 2, k);
             k = k / 2;
+        }
         }
     }
 
     fn sink(&mut self, mut k: usize, less: fn(T, T) -> bool) {
         while 2 * k <= self.n {
             let mut j = 2 * k;
-            if j < self.n
-                && less(
-                    self.keys[self.pq[j]].clone(),
-                    self.keys[self.pq[j + 1]].clone(),
-                )
-            {
-                j += 1;
+            if j < self.n {
+                let key_1 = match self.keys[self.pq[j]].clone() {
+                    Some(v) => v,
+                    None => continue
+                };
+    
+                let key_2 = match self.keys[self.pq[j + 1]].clone() {
+                    Some(v) => v,
+                    None => continue
+                };
+
+                if less(key_1, key_2) {
+                    j += 1;
+                }
             }
-            if !less(self.keys[self.pq[k]].clone(), self.keys[self.pq[j]].clone()) {
+
+            let key_1 = match self.keys[self.pq[k]].clone() {
+                Some(v) => v,
+                None => continue
+            };
+
+            let key_2 = match self.keys[self.pq[j]].clone() {
+                Some(v) => v,
+                None => continue
+            };
+
+            if !less(key_1, key_2) {
                 break;
             }
             self.exch(k, j);
@@ -170,7 +198,8 @@ impl<T: Ord + Clone + Default> Heap<T> {
     }
 
     fn iter(&mut self) -> Vec<T> {
-        self.keys[1..].to_vec()
+        // self.keys[1..].to_vec()
+        todo!()
     }
 }
 
