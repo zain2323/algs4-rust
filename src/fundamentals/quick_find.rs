@@ -16,17 +16,12 @@ impl QuickFindUF {
     }
 
     pub fn connected(&self, p: usize, q: usize) -> bool {
-        self.validate(p);
-        self.validate(q);
-        self.id[p] == self.id[q]
+        self.find(p) == self.find(q)
     }
 
     pub fn union(&mut self, p: usize, q: usize) {
-        self.validate(p);
-        self.validate(q);
-
-        let pid = self.id[p];
-        let qid = self.id[q];
+        let pid = self.find(p);
+        let qid = self.find(q);
 
         if pid == qid {
             return;

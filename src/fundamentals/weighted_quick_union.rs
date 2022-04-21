@@ -1,12 +1,15 @@
-pub struct QuickUnion {
+pub struct WeightedQuickUnion {
     id: Vec<usize>,
+    size: Vec<usize>,
     count: usize,
 }
 
-impl QuickUnion {
-    pub fn new(n: usize) -> QuickUnion {
-        QuickUnion {
-            id: Self::initialize_vec(n),
+impl WeightedQuickUnion {
+    pub fn new(n: usize) -> WeightedQuickUnion {
+        let (id_vec, size_vec) = Self::initialize_vec(n);
+        WeightedQuickUnion {
+            id: id_vec,
+            size: size_vec,
             count: n,
         }
     }
@@ -26,7 +29,13 @@ impl QuickUnion {
         if p_root == q_root {
             return;
         }
-        self.id[p_root] = q_root;
+        if self.size[p_root] < self.size[q_root] {
+            self.id[p_root] = q_root;
+            self.size[q_root] += self.size[p_root];
+        } else {
+            self.id[q_root] = p_root;
+            self.size[p_root] += self.size[q_root];
+        }
         self.count -= 1;
     }
 
@@ -53,12 +62,14 @@ impl QuickUnion {
         }
     }
 
-    fn initialize_vec(n: usize) -> Vec<usize> {
-        let mut vec = vec![0; n];
+    fn initialize_vec(n: usize) -> (Vec<usize>, Vec<usize>) {
+        let mut id = vec![0; n];
+        let mut size = vec![0; n];
         for i in 0..n {
-            vec[i] = i;
+            id[i] = i;
+            size[i] = 1;
         }
-        vec
+        (id, size)
     }
 }
 
@@ -67,6 +78,6 @@ mod test {
     use super::*;
     #[test]
     fn it_initializes() {
-        let qf = QuickUnion::new(10);
+        let qf = WeightedQuickUnion::new(10);
     }
 }
