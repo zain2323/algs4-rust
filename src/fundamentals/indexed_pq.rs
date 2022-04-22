@@ -49,11 +49,10 @@ impl<T: Ord + Clone + Default> Heap<T> {
 
     // Change the item associated with k
     fn change(&mut self, k: usize, key: T, less: fn(T, T) -> bool) {
-        self.inverse();
         // If the old key is smaller than the new key then sink method will reheapify the heap.
         // If the old key is greater than the new key then swim method will reheapify the heap.
         if self.contains(k) {
-            let idx = self.get_pos(k) + 1;
+            let idx = 1;
             let old_key = self.keys[idx].clone();
             self.keys[idx] = Some(key.clone());
             // if old_key < key {
@@ -71,26 +70,26 @@ impl<T: Ord + Clone + Default> Heap<T> {
 
     // Remove k and its associated item
     fn delete(&mut self, k: usize, less: fn(T, T) -> bool) {
-        self.inverse();
         if self.contains(k) {
-            let idx = self.get_pos(k) + 1;
-            self.keys.remove(idx);
-            self.pq.remove(idx);
+            self.keys[k] = None;
             self.qp[k] = -1;
+            self.sink(1, less);
+            self.exch(1, self.n);
             self.n -= 1;
-            self.sink(1, less)
+            self.sink(1, less);
         }
     }
 
     // Remove the minimal or maximal item and returns its index
     fn del(&mut self, less: fn(T, T) -> bool) -> usize {
         let index = self.index();
-        self.exch(1, self.pq.len() - 1);
+        self.exch(1, self.n);
         self.n -= 1;
         self.sink(1, less);
         let idx = self.pq[self.n + 1];
         self.keys[idx] = None;
         self.qp[idx] = -1;
+
         index
     }
 
@@ -115,21 +114,17 @@ impl<T: Ord + Clone + Default> Heap<T> {
         while k > 1 {
             let key_1 = match self.keys[self.pq[k / 2]].clone() {
                 Some(v) => v,
-                None => continue
+                None => continue,
             };
 
             let key_2 = match self.keys[self.pq[k]].clone() {
                 Some(v) => v,
-                None => continue
+                None => continue,
             };
-            if less(
-                key_1,
-                key_2,
-            )
-        {
-            self.exch(k / 2, k);
+            if less(key_1, key_2) {
+                self.exch(k / 2, k);
+            }
             k = k / 2;
-        }
         }
     }
 
@@ -137,64 +132,32 @@ impl<T: Ord + Clone + Default> Heap<T> {
         while 2 * k <= self.n {
             let mut j = 2 * k;
             if j < self.n {
-                let key_1 = match self.keys[self.pq[j]].clone() {
-                    Some(v) => v,
-                    None => continue
-                };
-    
-                let key_2 = match self.keys[self.pq[j + 1]].clone() {
-                    Some(v) => v,
-                    None => continue
-                };
-
+                let mut key_1: T = Default::default();
+                let mut key_2: T = Default::default();
+                if let Some(v) = self.keys[self.pq[j]].clone() {
+                    key_1 = v;
+                }
+                if let Some(v) = self.keys[self.pq[j + 1]].clone() {
+                    key_2 = v;
+                }
                 if less(key_1, key_2) {
                     j += 1;
                 }
             }
-
-            let key_1 = match self.keys[self.pq[k]].clone() {
-                Some(v) => v,
-                None => continue
-            };
-
-            let key_2 = match self.keys[self.pq[j]].clone() {
-                Some(v) => v,
-                None => continue
-            };
-
+            let mut key_1: T = Default::default();
+            let mut key_2: T = Default::default();
+            if let Some(v) = self.keys[self.pq[k]].clone() {
+                key_1 = v;
+            }
+            if let Some(v) = self.keys[self.pq[j]].clone() {
+                key_2 = v;
+            }
             if !less(key_1, key_2) {
                 break;
             }
             self.exch(k, j);
             k = j
         }
-    }
-
-    fn set_pos(&mut self, k: usize) {
-        let idx = self.index_of(k, &self.pq);
-        match idx {
-            Some(v) => self.qp[k] = v as isize,
-            None => self.qp[k] = -1,
-        }
-    }
-
-    fn inverse(&mut self) {
-        for i in 0..self.pq.len() {
-            self.set_pos(i)
-        }
-    }
-
-    fn index_of(&self, element: usize, arr: &Vec<usize>) -> Option<usize> {
-        for i in 1..arr.len() {
-            if arr[i] == element {
-                return Some(i);
-            }
-        }
-        return None;
-    }
-
-    fn get_pos(&self, k: usize) -> usize {
-        (self.qp[k] - 1) as usize
     }
 
     fn iter(&mut self) -> Vec<T> {
@@ -341,17 +304,17 @@ mod tests {
 
         // A will be deleted
         assert_eq!(heap.del_min(), 4);
-        // B will be deleted
-        // assert_eq!(heap.del_min(), 1);
         // C will be deleted
-        // assert_eq!(heap.del_min(), 3);
+        assert_eq!(heap.del_min(), 1);
+        // D will be deleted
+        assert_eq!(heap.del_min(), 3);
         // E will be deleted
-        // assert_eq!(heap.del_min(), 2);
+        assert_eq!(heap.del_min(), 2);
         // F will be deleted
-        // assert_eq!(heap.del_min(), 0);
+        assert_eq!(heap.del_min(), 0);
 
         // Checking if the heap is empty after deleting all the keys.
-        // assert_eq!(heap.is_empty(), true);
+        assert_eq!(heap.is_empty(), true);
     }
 
     #[test]
@@ -364,12 +327,15 @@ mod tests {
         heap.insert(2, "E");
         heap.insert(4, "A");
 
-        heap.delete(1);
-        assert_eq!(heap.contains(1), false);
+        assert_eq!(heap.contains(1), true);
         assert_eq!(heap.contains(3), true);
-        assert_eq!(heap.contains(10), false);
+        heap.delete(1);
+        heap.delete(3);
+        assert_eq!(heap.contains(1), false);
+        assert_eq!(heap.contains(3), false);
 
-        assert_eq!(heap.min(), "A");
-        assert_eq!(heap.min_index(), 4);
+        assert_eq!(heap.del_min(), 4);
+        assert_eq!(heap.del_min(), 2);
+        assert_eq!(heap.del_min(), 0);
     }
 }
