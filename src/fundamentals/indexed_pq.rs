@@ -2,6 +2,8 @@
 Max and Min Index Priority Queue
  */
 
+use std::slice::Iter;
+
 struct Heap<T: Ord + Clone + Default> {
     // this hold indices
     pq: Vec<usize>,
@@ -52,14 +54,14 @@ impl<T: Ord + Clone + Default> Heap<T> {
         // If the old key is smaller than the new key then sink method will reheapify the heap.
         // If the old key is greater than the new key then swim method will reheapify the heap.
         if self.contains(k) {
-            let idx = 1;
-            let old_key = self.keys[idx].clone();
-            self.keys[idx] = Some(key.clone());
-            // if old_key < key {
-            //     self.sink(1, less);
-            // } else if old_key > key {
-            //     self.swim(self.size(), less)
-            // }
+            let old_key = self.keys[k].clone();
+            let key = Some(key);
+            self.keys[k] = key.clone();
+            if old_key < key {
+                self.sink(1, less);
+            } else if old_key > key {
+                self.swim(self.size(), less)
+            }
         }
     }
 
@@ -89,7 +91,6 @@ impl<T: Ord + Clone + Default> Heap<T> {
         let idx = self.pq[self.n + 1];
         self.keys[idx] = None;
         self.qp[idx] = -1;
-
         index
     }
 
@@ -98,7 +99,9 @@ impl<T: Ord + Clone + Default> Heap<T> {
         if self.is_empty() {
             panic!("Heap is empty")
         }
-        self.keys[self.index()].clone().expect("None")
+        self.keys[self.index()]
+            .clone()
+            .expect("Value does not exist")
     }
 
     // Returns the minimal or maximal item index
@@ -159,11 +162,6 @@ impl<T: Ord + Clone + Default> Heap<T> {
             k = j
         }
     }
-
-    fn iter(&mut self) -> Vec<T> {
-        // self.keys[1..].to_vec()
-        todo!()
-    }
 }
 
 impl<T: Ord + Clone + Default> MaxHeap<T> {
@@ -206,10 +204,6 @@ impl<T: Ord + Clone + Default> MaxHeap<T> {
     pub fn delete(&mut self, k: usize) {
         self.heap.delete(k, less_min);
     }
-
-    pub fn iter(&mut self) -> Vec<T> {
-        self.heap.iter()
-    }
 }
 
 impl<T: Ord + Clone + Default> MinHeap<T> {
@@ -251,10 +245,6 @@ impl<T: Ord + Clone + Default> MinHeap<T> {
 
     pub fn delete(&mut self, k: usize) {
         self.heap.delete(k, less_min);
-    }
-
-    pub fn iter(&mut self) -> Vec<T> {
-        self.heap.iter()
     }
 }
 
@@ -299,8 +289,6 @@ mod tests {
         heap.insert(1, "C");
         heap.insert(2, "E");
         heap.insert(4, "A");
-        // Changing Key 'D' to 'B' and new key is smaller
-        // heap.change(3, "B");
 
         // A will be deleted
         assert_eq!(heap.del_min(), 4);
@@ -337,5 +325,37 @@ mod tests {
         assert_eq!(heap.del_min(), 4);
         assert_eq!(heap.del_min(), 2);
         assert_eq!(heap.del_min(), 0);
+    }
+
+    #[test]
+    fn changing_key_by_index() {
+        let mut heap = indexed_pq::MinHeap::<&str>::new(5);
+        assert_eq!(heap.is_empty(), true);
+        heap.insert(3, "D");
+        heap.insert(0, "F");
+        heap.insert(1, "C");
+        heap.insert(2, "E");
+        heap.insert(4, "A");
+
+        // Changing 'D' to 'B'
+        heap.change(3, "B");
+        // Changing 'A' to 'Z'
+        heap.change(4, "Z");
+
+        /*
+        Now expected heap order is:
+        B, C, E, F, Z
+         */
+
+        // B will be deleted
+        assert_eq!(heap.del_min(), 3);
+        // C will be deleted
+        assert_eq!(heap.del_min(), 1);
+        // E will be deleted
+        assert_eq!(heap.del_min(), 2);
+        // F will be deleted
+        assert_eq!(heap.del_min(), 0);
+        // Z will be deleted
+        assert_eq!(heap.del_min(), 4);
     }
 }
