@@ -248,10 +248,12 @@ impl<T: Ord + Clone + Default> MinHeap<T> {
     }
 }
 
+// For max heap
 fn less_max<T: Ord + Clone>(i: T, j: T) -> bool {
     i.lt(&j)
 }
 
+// For min heap
 fn less_min<T: Ord + Clone>(i: T, j: T) -> bool {
     !i.lt(&j)
 }
@@ -259,88 +261,159 @@ fn less_min<T: Ord + Clone>(i: T, j: T) -> bool {
 #[cfg(test)]
 mod tests {
     use crate::fundamentals::indexed_pq;
+    use std::cmp::max;
 
     #[test]
-    fn min_heap() {
-        let mut heap = indexed_pq::MinHeap::<&str>::new(5);
-        assert_eq!(heap.is_empty(), true);
-        heap.insert(3, "D");
-        heap.insert(0, "F");
-        heap.insert(1, "C");
-        heap.insert(2, "E");
-        heap.insert(4, "A");
+    fn insert() {
+        let mut min_heap = indexed_pq::MinHeap::<&str>::new(5);
+        let mut max_heap = indexed_pq::MaxHeap::<&str>::new(5);
 
-        assert_eq!(heap.contains(1), true);
-        assert_eq!(heap.contains(2), true);
-        assert_eq!(heap.contains(3), true);
-        assert_eq!(heap.contains(4), true);
-        assert_eq!(heap.contains(0), true);
-        assert_eq!(heap.contains(5), false);
-        assert_eq!(heap.is_empty(), false);
-        assert_eq!(heap.size(), 5);
+        // Min heap
+        assert_eq!(min_heap.is_empty(), true);
+        min_heap.insert(3, "D");
+        min_heap.insert(0, "F");
+        min_heap.insert(1, "C");
+        min_heap.insert(2, "E");
+        min_heap.insert(4, "A");
+
+        assert_eq!(min_heap.contains(1), true);
+        assert_eq!(min_heap.contains(2), true);
+        assert_eq!(min_heap.contains(3), true);
+        assert_eq!(min_heap.contains(4), true);
+        assert_eq!(min_heap.contains(0), true);
+        assert_eq!(min_heap.contains(5), false);
+        assert_eq!(min_heap.is_empty(), false);
+        assert_eq!(min_heap.size(), 5);
+
+        // Max heap
+        assert_eq!(max_heap.is_empty(), true);
+        max_heap.insert(3, "D");
+        max_heap.insert(0, "F");
+        max_heap.insert(1, "C");
+        max_heap.insert(2, "E");
+        max_heap.insert(4, "A");
+
+        assert_eq!(max_heap.contains(1), true);
+        assert_eq!(max_heap.contains(2), true);
+        assert_eq!(max_heap.contains(3), true);
+        assert_eq!(max_heap.contains(4), true);
+        assert_eq!(max_heap.contains(0), true);
+        assert_eq!(max_heap.contains(5), false);
+        assert_eq!(max_heap.is_empty(), false);
+        assert_eq!(max_heap.size(), 5);
     }
 
     #[test]
-    fn changing_key() {
-        let mut heap = indexed_pq::MinHeap::<&str>::new(5);
-        assert_eq!(heap.is_empty(), true);
-        heap.insert(3, "D");
-        heap.insert(0, "F");
-        heap.insert(1, "C");
-        heap.insert(2, "E");
-        heap.insert(4, "A");
+    fn deleting_extreme_values() {
+        let mut min_heap = indexed_pq::MinHeap::<&str>::new(5);
+        let mut max_heap = indexed_pq::MaxHeap::<&str>::new(5);
+
+        // Min heap
+        assert_eq!(min_heap.is_empty(), true);
+        min_heap.insert(3, "D");
+        min_heap.insert(0, "F");
+        min_heap.insert(1, "C");
+        min_heap.insert(2, "E");
+        min_heap.insert(4, "A");
 
         // A will be deleted
-        assert_eq!(heap.del_min(), 4);
+        assert_eq!(min_heap.del_min(), 4);
         // C will be deleted
-        assert_eq!(heap.del_min(), 1);
+        assert_eq!(min_heap.del_min(), 1);
         // D will be deleted
-        assert_eq!(heap.del_min(), 3);
+        assert_eq!(min_heap.del_min(), 3);
         // E will be deleted
-        assert_eq!(heap.del_min(), 2);
+        assert_eq!(min_heap.del_min(), 2);
         // F will be deleted
-        assert_eq!(heap.del_min(), 0);
+        assert_eq!(min_heap.del_min(), 0);
 
         // Checking if the heap is empty after deleting all the keys.
-        assert_eq!(heap.is_empty(), true);
+        assert_eq!(min_heap.is_empty(), true);
+
+        // Max heap
+        assert_eq!(max_heap.is_empty(), true);
+        max_heap.insert(3, "D");
+        max_heap.insert(0, "F");
+        max_heap.insert(1, "C");
+        max_heap.insert(2, "E");
+        max_heap.insert(4, "A");
+
+        // F will be deleted
+        assert_eq!(max_heap.del_max(), 0);
+        // E will be deleted
+        assert_eq!(max_heap.del_max(), 2);
+        // D will be deleted
+        assert_eq!(max_heap.del_max(), 3);
+        // C will be deleted
+        assert_eq!(max_heap.del_max(), 1);
+        // A will be deleted
+        assert_eq!(max_heap.del_max(), 4);
+
+        // Checking if the heap is empty after deleting all the keys.
+        assert_eq!(max_heap.is_empty(), true);
     }
 
     #[test]
     fn deleting_key_by_index() {
-        let mut heap = indexed_pq::MinHeap::<&str>::new(5);
-        assert_eq!(heap.is_empty(), true);
-        heap.insert(3, "D");
-        heap.insert(0, "F");
-        heap.insert(1, "C");
-        heap.insert(2, "E");
-        heap.insert(4, "A");
+        let mut min_heap = indexed_pq::MinHeap::<&str>::new(5);
+        let mut max_heap = indexed_pq::MaxHeap::<&str>::new(5);
 
-        assert_eq!(heap.contains(1), true);
-        assert_eq!(heap.contains(3), true);
-        heap.delete(1);
-        heap.delete(3);
-        assert_eq!(heap.contains(1), false);
-        assert_eq!(heap.contains(3), false);
+        // Min heap
+        assert_eq!(min_heap.is_empty(), true);
+        min_heap.insert(3, "D");
+        min_heap.insert(0, "F");
+        min_heap.insert(1, "C");
+        min_heap.insert(2, "E");
+        min_heap.insert(4, "A");
 
-        assert_eq!(heap.del_min(), 4);
-        assert_eq!(heap.del_min(), 2);
-        assert_eq!(heap.del_min(), 0);
+        assert_eq!(min_heap.contains(1), true);
+        assert_eq!(min_heap.contains(3), true);
+        min_heap.delete(1);
+        min_heap.delete(3);
+        assert_eq!(min_heap.contains(1), false);
+        assert_eq!(min_heap.contains(3), false);
+
+        assert_eq!(min_heap.del_min(), 4);
+        assert_eq!(min_heap.del_min(), 2);
+        assert_eq!(min_heap.del_min(), 0);
+
+        // Max heap
+        assert_eq!(max_heap.is_empty(), true);
+        max_heap.insert(3, "D");
+        max_heap.insert(0, "F");
+        max_heap.insert(1, "C");
+        max_heap.insert(2, "E");
+        max_heap.insert(4, "A");
+
+        assert_eq!(max_heap.contains(1), true);
+        assert_eq!(max_heap.contains(3), true);
+        max_heap.delete(1);
+        max_heap.delete(3);
+        assert_eq!(max_heap.contains(1), false);
+        assert_eq!(max_heap.contains(3), false);
+
+        assert_eq!(max_heap.del_max(), 0);
+        assert_eq!(max_heap.del_max(), 2);
+        assert_eq!(max_heap.del_max(), 4);
     }
 
     #[test]
     fn changing_key_by_index() {
-        let mut heap = indexed_pq::MinHeap::<&str>::new(5);
-        assert_eq!(heap.is_empty(), true);
-        heap.insert(3, "D");
-        heap.insert(0, "F");
-        heap.insert(1, "C");
-        heap.insert(2, "E");
-        heap.insert(4, "A");
+        let mut min_heap = indexed_pq::MinHeap::<&str>::new(5);
+        let mut max_heap = indexed_pq::MaxHeap::<&str>::new(5);
+
+        // Min heap
+        assert_eq!(min_heap.is_empty(), true);
+        min_heap.insert(3, "D");
+        min_heap.insert(0, "F");
+        min_heap.insert(1, "C");
+        min_heap.insert(2, "E");
+        min_heap.insert(4, "A");
 
         // Changing 'D' to 'B'
-        heap.change(3, "B");
+        min_heap.change(3, "B");
         // Changing 'A' to 'Z'
-        heap.change(4, "Z");
+        min_heap.change(4, "Z");
 
         /*
         Now expected heap order is:
@@ -348,14 +421,43 @@ mod tests {
          */
 
         // B will be deleted
-        assert_eq!(heap.del_min(), 3);
+        assert_eq!(min_heap.del_min(), 3);
         // C will be deleted
-        assert_eq!(heap.del_min(), 1);
+        assert_eq!(min_heap.del_min(), 1);
         // E will be deleted
-        assert_eq!(heap.del_min(), 2);
+        assert_eq!(min_heap.del_min(), 2);
         // F will be deleted
-        assert_eq!(heap.del_min(), 0);
+        assert_eq!(min_heap.del_min(), 0);
         // Z will be deleted
-        assert_eq!(heap.del_min(), 4);
+        assert_eq!(min_heap.del_min(), 4);
+
+        // Max heap
+        assert_eq!(max_heap.is_empty(), true);
+        max_heap.insert(3, "D");
+        max_heap.insert(0, "F");
+        max_heap.insert(1, "C");
+        max_heap.insert(2, "E");
+        max_heap.insert(4, "A");
+
+        // Changing 'D' to 'B'
+        max_heap.change(3, "B");
+        // Changing 'A' to 'Z'
+        max_heap.change(4, "Z");
+
+        /*
+        Now expected heap order is:
+        Z, F, E, C, B
+         */
+
+        // Z will be deleted
+        assert_eq!(max_heap.del_max(), 4);
+        // F will be deleted
+        assert_eq!(max_heap.del_max(), 0);
+        // E will be deleted
+        assert_eq!(max_heap.del_max(), 2);
+        // C will be deleted
+        assert_eq!(max_heap.del_max(), 1);
+        // B will be deleted
+        assert_eq!(max_heap.del_max(), 3);
     }
 }
